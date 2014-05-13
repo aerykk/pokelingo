@@ -46,10 +46,14 @@
                     background-color: #eee;
                 }
 
-                    .c-filters__listing > a.c--active {
+                    .c-filters__listing > a.c--shown {
                         display: block;
-                        background-color: #eee; /* 5e92ff */
-                        /*color: #fff; */
+                        background-color: #eee;
+                    }
+
+                    .c-filters__listing > a.c--active {
+                        background-color: #5e92ff;
+                        color: #fff;
                     }
             
             .c-filters {
@@ -104,6 +108,10 @@
             
             }
             
+                #sections .it {
+                    display: none;
+                }
+            
                 #sections table {
                     width: 100%;
                 }
@@ -146,6 +154,11 @@
                     
                 .c-message__value {
                 }
+                
+                    .c-message__group {
+                        width: 350px;
+                    }
+                    
                     .c-message__group span {
                         margin: 0 2px;
                         
@@ -214,6 +227,7 @@
                 <tr>
                     <th>English</th>
                     <th>Japanese</th>
+                    <th class="it">Italian</th>
                 </tr>
             </thead>
             <tbody>
@@ -325,6 +339,9 @@
                 var $sections = $('#sections');
                 var $listing = $('.c-filters__listing');
                 
+                var listingIndex = 0;
+                var resultIndex = 0;
+                
                 function convertMessageText(text) {
                     text = text.replace(/\\n/gi, '<br>');
                     text = text.replace(/\\r/gi, '<br><br>');
@@ -370,7 +387,7 @@
                             });
                         });
 
-                        $listing.children().removeClass('c--active');
+                        $listing.children().removeClass('c--shown');
 
                         if(foundList.length) {
                             $status.html("Found " + foundList.length + " results").addClass('c--active');
@@ -378,7 +395,7 @@
                             for(var i = 0, l = foundList.length; i < l; ++i) {
                                 var id = foundList[i];
 
-                                $listing.children().eq(id).addClass('c--active');
+                                $listing.children().eq(id).addClass('c--shown');
                             }
                         }
                         else {
@@ -399,15 +416,23 @@
                     
                     for(var i = 0, l = lang.en.messages.length; i < l; ++i) {
                         var enMessages = lang.en.messages[i];
-                        var $option = $('<a class="c--active" href="javascript:;"></a>');
+                        var $option = $('<a class="c-filters__listing-item c--shown" href="javascript:;"></a>');
 
                         $option.data('id', i).html('#' + i + ' (' + enMessages.length + ')');
 
                         $option.appendTo($listing);
                     }
 
-                    $listing.children().on('click', function() {
+                    $listing.find('.c-filters__listing-item').on('click', function() {
                         var $item = $(this);
+
+                        // Clear all item active states
+                        $listing.find('.c-filters__listing-item').removeClass('c--active');
+                        
+                        $item.addClass('c--active');
+                        
+                        // Reset the result index to 0 so it shows the first result in the list
+                        resultIndex = 0;
 
                         updateSection($item.data('id'));
                     });
@@ -549,8 +574,6 @@
                     }
                 }
                 
-                var resultIndex = 0;
-                
                 function bindFilterResultNavigation() {
                     $('.c-filters__navigation-control.c--back').on('click', function() {
                         $(document).scrollTop(0);
@@ -560,24 +583,70 @@
                     
                     $('.c-filters__navigation-control.c--prev').on('click', function() {
                         if(resultIndex === 0) {
-                            return false;
+                            // If we're on the first result of this listing, 
+                            // let's go to the prev listing (or to the last listing)
+                            if(listingIndex === 0) {
+                                // We're on the first listing item
+                                // So let's go to the end
+                                listingIndex = $('.c-filters__listing .c-filters__listing-item.c--shown').length - 1;
+                            }
+                            else {
+                                --listingIndex;
+                            }
+                            
+                            resultIndex = 0;
+                            
+                            // Clear all item active states
+                            $('.c-filters__listing .c-filters__listing-item').removeClass('c--active');
+                        }
+                        else {
+                            --resultIndex;
                         }
                         
-                        --resultIndex;
+                        if(!$('.c-filters__listing .c-filters__listing-item.c--active').length) {
+                            // Activate the newly active listing
+                            $('.c-filters__listing .c-filters__listing-item.c--shown').eq(listingIndex).addClass('c--active').trigger('click');
+                        }
                         
-                        $(document).scrollTop($('.c-message__group.c--active').eq(resultIndex).offset().top);
+                        // We need a delay here to wait for rendering of the newly active listing
+                        setTimeout(function() {
+                            $(window).scrollTop($('.c-message__group.c--active').eq(resultIndex).offset().top);
+                        });
                         
                         return false;
                     });
                 
                     $('.c-filters__navigation-control.c--next').on('click', function() {
                         if(resultIndex === $('.c-message__group.c--active').length - 1) {
-                            return false;
+                            // If we're on the last result of this listing, 
+                            // let's go to the next listing (or back to the first listing)
+                            if(listingIndex === $('.c-filters__listing .c-filters__listing-item.c--shown').length - 1) {
+                                // We're on the last listing item
+                                // So let's go back to the beginning
+                                listingIndex = 0;
+                            }
+                            else {
+                                ++listingIndex;
+                            }
+                            
+                            resultIndex = 0;
+                            
+                            // Clear all item active states
+                            $('.c-filters__listing .c-filters__listing-item').removeClass('c--active');
+                        }
+                        else {
+                            ++resultIndex;
                         }
                         
-                        ++resultIndex;
+                        if(!$('.c-filters__listing .c-filters__listing-item.c--active').length) {
+                            // Activate the newly active listing
+                            $('.c-filters__listing .c-filters__listing-item.c--shown').eq(listingIndex).addClass('c--active').trigger('click');
+                        }
                         
-                        $(document).scrollTop($('.c-message__group.c--active').eq(resultIndex).offset().top);
+                        // We need a delay here to wait for rendering of the newly active listing
+                        setTimeout(function() {
+                            $(window).scrollTop($('.c-message__group.c--active').eq(resultIndex).offset().top);
+                        });
                         
                         return false;
                     });
