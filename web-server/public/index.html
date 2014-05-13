@@ -53,12 +53,6 @@
                     }
             
             .c-filters {
-                position: fixed;
-                
-                top: 10px;
-                
-                left: 10px;
-                
             }
             
                 .c-filters__navigation {
@@ -183,16 +177,31 @@
                     background-color: #ddd;
                 }
                 
-            .c-sidebar, .c-main {
+            .c-primary-sidebar, .c-main, .c-secondary-sidebar {
                 float: left;
             }
             
-            .c-sidebar {
-                width: 30%;
+            .c-primary-sidebar {
+                position: fixed;
+                
+                top: 10px;
+                left: 10px;
+                
+                width: 20%;
+            }
+            
+            .c-secondary-sidebar {
+                position: fixed;
+                
+                top: 10px;
+                right: 10px;
+                
+                width: 20%;
             }
             
             .c-main {
-                margin-left: 30%;
+                margin-left: 20%;
+                margin-right: 20%;
                 
                 padding: 0 20px 20px 20px;
             }
@@ -217,7 +226,7 @@
         </table>
 
         <div id="wrapper">
-            <div class="c-sidebar">
+            <div class="c-primary-sidebar">
                 <form id="filters" class="c-filters">
                     <div class="c-filters__search">
                         <input class="c-filters__search-input" type="text" name="search" value="" placeholder="Search" />
@@ -240,6 +249,19 @@
                 <h1 class="c-title"></h1>
                 <div id="sections"></div>
             </div>
+            
+            <div class="c-secondary-sidebar">
+                <div class="c-translation">
+                    <div class="c-translation__original">
+                        <h2>Original:</h2>
+                        <div class="c-translation__original-result">None yet</div>
+                    </div>
+                    <div class="c-translation__translated">
+                        <h2>Translated:</h2>
+                        <div class="c-translation__translated-result">None yet</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="tts"></div>
@@ -261,6 +283,35 @@
                     
                 }
             };
+            
+            function getSelectionHTML() {
+                var userSelection;
+                if (window.getSelection) {
+                    // W3C Ranges
+                    userSelection = window.getSelection ();
+                    var range = document.createRange ();
+                    
+                    if(!userSelection.anchorNode) {
+                        return;
+                    }
+                    
+                    range.setStart (userSelection.anchorNode, userSelection.anchorOffset);
+                    range.setEnd (userSelection.focusNode, userSelection.focusOffset);
+
+                    var clonedSelection = range.cloneContents ();
+                    
+                    var div = document.createElement ('div');
+                    div.appendChild (clonedSelection);
+                    return div.innerHTML;
+                } else if (document.selection) {
+                    // Explorer selection, return the HTML
+                    userSelection = document.selection.createRange ();
+                    return userSelection.htmlText;
+                } else {
+                    return '';
+                }
+            }
+
             
             jQuery(function($) {
                 var $sections = $('#sections');
@@ -524,7 +575,7 @@
                     });
                 }
 
-                function bindTTS() {
+                function bindVoiceTranslation() {
                     $(document).on('click', '.c-message__text', function() {
                         var $item = $(this);
 
@@ -568,6 +619,40 @@
                         $('<script>').attr('src', 'http://localhost:3001/api/1/tts/?lang=' + lang + '&callback=injectTTS&text=' + $item.text()).appendTo('head');
                     });
                     
+                }
+                
+                function bindTextTranslation() {
+                    $('.c-main').on('mouseup', function(e) {
+                        if(!$(e.target).parents('.c-message.jp').length) {
+                            // Don't bother continuing for non-Japanese message containers
+                            return;
+                        }
+                        
+                        var html = getSelectionHTML();
+                        var text = $('<div>' + html + '</div>').text();
+                        
+                        $('.c-translation__original-result').html(text);
+                        
+                        window.babylonTranslator = {
+                            callback: function(key, res, x1, x2, x3) {
+                                if(!res || !res.translatedText) {
+                                    $('.c-translation__translated').html('Error translating');
+                                    
+                                    return;
+                                }
+                                
+                                $('.c-translation__translated-result').html(res.translatedText);
+                            }
+                        };
+                        
+                        var src = 'http://translation.babylon.com/translate/babylon.php?v=1.0&q=' + (text) + '&langpair=8%7C0&callback=babylonTranslator.callback&context=babylon.8.0._babylon_api_response';
+
+                        var $script = $('<script>');
+                        
+                        $script.attr('src', src);
+                        
+                        $('head').append($script);
+                    });
                 }
                 
                 function initExternalMessages() {
@@ -638,7 +723,8 @@
                 //initInlineMessages();
                 bindFilters();
                 bindFilterResultNavigation();
-                bindTTS();
+                bindTextTranslation();
+                bindVoiceTranslation();
                 initExternalMessages();
                 
             });
