@@ -295,13 +295,21 @@
                         return;
                     }
                     
-                    range.setStart (userSelection.anchorNode, userSelection.anchorOffset);
-                    range.setEnd (userSelection.focusNode, userSelection.focusOffset);
+                    var clonedSelection;
+                    
+                    if(userSelection.anchorNode == userSelection.focusNode) {
+                        clonedSelection = userSelection.anchorNode.cloneNode(true);
+                    }
+                    else {
+                        range.setStart (userSelection.anchorNode, userSelection.anchorOffset);
+                        range.setEnd (userSelection.focusNode, userSelection.focusOffset);
 
-                    var clonedSelection = range.cloneContents ();
+                        clonedSelection = range.cloneContents();
+                    }
                     
                     var div = document.createElement ('div');
                     div.appendChild (clonedSelection);
+                    
                     return div.innerHTML;
                 } else if (document.selection) {
                     // Explorer selection, return the HTML
