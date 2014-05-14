@@ -1,0 +1,30 @@
+{
+    "name": "pokelingo",
+    "description": "Pokelingo",
+    "version": "0.0.1",
+    "homepage": "http://github.com/ericmuyser/pokelingo",
+    "bugs": "http://github.com/ericmuyser/pokelingo/issues",
+    "author": {
+        "name": "Eric Muyser",
+        "email": "eric@muyser.com",
+        "url": "http://ericmuyser.com"	
+    },
+    "main": "server.js",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/ericmuyser/pokelingo.git"
+    },
+    "dependencies": {
+        "connect": "~2.14.5",
+        "express": "~4.1.1"
+    },
+    "engines": {
+        "node": ">=0.8.19",
+        "npm": ">=1.2.10"
+    },
+    "licenses": [
+        {
+            "type": "MIT"
+        }
+    ]
+}
