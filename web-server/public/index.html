@@ -312,13 +312,22 @@
                         clonedSelection = userSelection.anchorNode.cloneNode(true);
                     }
                     else {
-                        range.setStart (userSelection.anchorNode, userSelection.anchorOffset);
-                        range.setEnd (userSelection.focusNode, userSelection.focusOffset);
+                        // Use the element with the lower offset as the start node
+                        // Because sometimes we select text backwards
+                        if(userSelection.anchorOffset < userSelection.focusOffset) {
+                            range.setStart(userSelection.anchorNode, userSelection.anchorOffset);
+                            range.setEnd(userSelection.focusNode, userSelection.focusOffset);
+                        }
+                        else {
+                            range.setStart(userSelection.focusNode, userSelection.focusOffset);
+                            range.setEnd(userSelection.anchorNode, userSelection.anchorOffset);
+                        }
 
                         clonedSelection = range.cloneContents();
                     }
                     
-                    var div = document.createElement ('div');
+                    var div = document.createElement('div');
+                    
                     div.appendChild (clonedSelection);
                     
                     return div.innerHTML;
@@ -718,6 +727,8 @@
                                 $('.c-translation__translated-result').html(res.translatedText);
                             }
                         };
+                        
+                        text = text.replace(/　/gi, '+');
                         
                         var src = 'http://translation.babylon.com/translate/babylon.php?v=1.0&q=' + (text) + '&langpair=8%7C0&callback=babylonTranslator.callback&context=babylon.8.0._babylon_api_response';
 
