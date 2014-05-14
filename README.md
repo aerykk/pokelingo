@@ -21,11 +21,11 @@ More to come...
 
 ## Installation
 
-* Install Node.js v0.8.19
+* Install Node.js v0.8.19.
 * Run `npm install`.
 
 ## Getting Started
 
 * Navigate to the folder.
-* Run `sudo node server.js`
+* Run `sudo node server.js`.
 * Open `http://localhost/index.html` in your browser.
