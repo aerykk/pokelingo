@@ -349,18 +349,26 @@
                 var resultIndex = 0;
                 
                 function convertMessageText(text) {
-                    text = text.replace(/\\n/gi, '<br>');
-                    text = text.replace(/\\r/gi, '<br><br>');
-                    text = text.replace(/\\f/gi, '<br>');
+                    text = text.replace(/\\n/gi, '<br> 　');
+                    text = text.replace(/\\r/gi, '<br><br> 　');
+                    text = text.replace(/\\f/gi, '<br> 　');
                     
-                    text = text.replace(/VAR\(259, 1, 0\)/gi, '[PLAYER NAME]');
-                    text = text.replace(/VAR\(259, 1\)/gi, '[PLAYER NAME]');
-                    text = text.replace(/VAR\(259, 0, 0\)/gi, '[FRIEND NAME]');
-                    text = text.replace(/VAR\(259, 0\)/gi, '[FRIEND NAME]');
-                    text = text.replace(/VAR\(257, 0, 0\)/gi, '[POKEMON NAME]');
-                    text = text.replace(/VAR\(257, 0\)/gi, '[POKEMON NAME]');
-                    text = text.replace(/VAR\(262, 0, 0\)/gi, '[SKILL NAME]');
-                    text = text.replace(/VAR\(262, 0\)/gi, '[SKILL NAME]');
+                    text = text.replace(/VAR\(259, 1, 0\)/gi, 'PLAYER');
+                    text = text.replace(/VAR\(259, 1\)/gi, 'PLAYER');
+                    text = text.replace(/VAR\(260, 0, 0\)/gi, 'FRIEND');
+                    text = text.replace(/VAR\(260, 0\)/gi, 'FRIEND');
+                    text = text.replace(/VAR\(257, 0, 0\)/gi, 'POKEMON');
+                    text = text.replace(/VAR\(257, 0\)/gi, 'POKEMON');
+                    text = text.replace(/VAR\(262, 0, 0\)/gi, 'SKILL');
+                    text = text.replace(/VAR\(262, 0\)/gi, 'SKILL');
+                    text = text.replace(/VAR\(256, 0\)/gi, 'POKEMON');
+                    text = text.replace(/VAR\(256, 0, 0\)/gi, 'POKEMON');
+                    
+                    // Replace all the rest of the VAR instances with X
+                    text = text.replace(/VAR\([0-9]+, [0-9]+\)/gi, ' X ');
+                    text = text.replace(/VAR\([0-9]+, [0-9]+, [0-9]+\)/gi, ' X ');
+                    
+                    text = text.replace(/『/gi, '　『');
                     
                     text = unescape(text.replace(/\\x/gi, "%"));
                     
