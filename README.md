@@ -17,15 +17,15 @@ More to come...
 * More languages: Italian, Spanish, etc.
 * More games: Pokemon Black/White, etc.
 * Create your own conversation by saving phrases!
+* Saved word lists with automatic highlighting.
 
 ## Installation
 
-* Install Node.js v0.10.1
-* Navigate to `tts-server`. Run `npm install`.
-* Navigate to `web-server`. Run `npm install`.
+* Install Node.js v0.8.19
+* Run `npm install`.
 
 ## Getting Started
 
-* Navigate to `tts-server`. Run `node server.js`.
-* Navigate to `web-server`. Run `node server.js`.
-* Open `http://localhost:3000/index.html` in your browser.
+* Navigate to the folder.
+* Run `sudo node server.js`
+* Open `http://localhost/index.html` in your browser.
