@@ -2,6 +2,8 @@
 
 More to come...
 
+![Preview](https://pbs.twimg.com/media/Bnh2Kb3CAAA9GtY.png)
+
 ## Features
 
 * Search entire text used in Pokemon Platinum (so far).
