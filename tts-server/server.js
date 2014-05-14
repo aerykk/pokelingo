@@ -22,8 +22,6 @@ var app = connect()
           cmd = "curl 'http://imtranslator.net/translate-and-speak/sockets/tts.asp?FA=1&dir=enf&speed=0&B=1&ID=719936066&chr=AnnaHead&vc=VW%20Kate' -H 'Pragma: no-cache' -H 'Origin: http://imtranslator.net' -H 'Accept-Encoding: gzip,deflate,sdch' -H 'Accept-Language: en-US,en;q=0.8' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' -H 'Cache-Control: no-cache' -H 'Referer: http://imtranslator.net/translate-and-speak/sockets/tts.asp?FA=1&dir=enf&speed=0&B=1&ID=719936066&chr=AnnaHead&vc=VW%20Kate' -H 'Cookie: ASPSESSIONIDAQCTDACT=OJEAJOKCCPBDOLCAELKBMBPD; TTSid=719936066; ASPSESSIONIDASRCABCT=EIPIJFNCMMMBGHGEDBDKMAMI; __utma=87094784.1264872206.1399156538.1399156538.1399176286.2; __utmb=87094784.14.10.1399176286; __utmc=87094784; __utmz=87094784.1399156538.1.1.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided)' -H 'Connection: keep-alive' --data 'text=" + text + "&chr=AnnaHead&speed=0&voice=&dir=enf&B=1' --compressed";
       }
       
-      console.log(cmd);
-      
       exec(cmd, function (error, stdout, stderr) {
         if (error !== null) {
             console.error('exec error: ' + error);
@@ -46,4 +44,4 @@ var app = connect()
     });
 });
 
-http.createServer(app).listen(3001);
+http.createServer(app).listen(process.env.TTS_SERVER_PORT || 3001);
