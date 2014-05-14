@@ -753,7 +753,7 @@
 
                         var lang = $item.parents('.c-message').data('lang');
                         
-                        $('<script>').attr('src', 'http://localhost:3001/api/1/tts/?lang=' + lang + '&callback=injectTTS&text=' + $item.text()).appendTo('head');
+                        $('<script>').attr('src', 'http://' + window.location.hostname + ':3001/api/1/tts/?lang=' + lang + '&callback=injectTTS&text=' + $item.text()).appendTo('head');
                     });
 
                     $(document).on('click', '.c-message__key', function() {
@@ -767,7 +767,7 @@
 
                         var lang = $item.parents('.c-message').data('lang');
 
-                        $('<script>').attr('src', 'http://localhost:3001/api/1/tts/?lang=' + lang + '&callback=injectTTS&text=' + $item.text()).appendTo('head');
+                        $('<script>').attr('src', 'http://' + window.location.hostname + ':3001/api/1/tts/?lang=' + lang + '&callback=injectTTS&text=' + $item.text()).appendTo('head');
                     });
                     
 
@@ -782,7 +782,7 @@
 
                         var lang = $item.parents('.c-message').data('lang');
 
-                        $('<script>').attr('src', 'http://localhost:3001/api/1/tts/?lang=' + lang + '&callback=injectTTS&text=' + $item.text()).appendTo('head');
+                        $('<script>').attr('src', 'http://' + window.location.hostname + ':3001/api/1/tts/?lang=' + lang + '&callback=injectTTS&text=' + $item.text()).appendTo('head');
                     });
                     
                 }
