@@ -14,6 +14,24 @@
             table {
                 border: 0;
             }
+            
+            .c-intro {
+                display: none;
+                
+                text-align: center;
+            }
+            
+                .c-intro.c--shown {
+                    display: block;
+                }
+                
+            .c-game-panel {
+                display: none;
+            }
+            
+                .c-game-panel.c--shown {
+                    display: block;
+                }
 
             .sectionTemplate {
                 display: none;
@@ -27,7 +45,7 @@
                 clear: both;
                 
                 width: 100px;
-                height: 800px;
+                height: 400px;
                 
                 overflow: auto;
                 
@@ -70,6 +88,9 @@
                         background: #eee;
                         margin: 1px 0 1px 0;
                         text-decoration: none;
+                        text-align: center;
+                        font-size: 12px;
+                        font-weight: bold;
                     }
 
                 .c-filters__status {
@@ -153,7 +174,7 @@
                 }
                 
                     .c-message__group {
-                        width: 350px;
+                        width: 400px;
                     }
                     
                     .c-message__group span {
@@ -215,28 +236,43 @@
                 
                 padding: 0 20px 20px 20px;
             }
+            
+            .c-alert {
+                padding: 15px;
+                margin-bottom: 20px;
+                border: 1px solid transparent;
+                border-radius: 4px;
+                display: none;
+                background-color: #fcf8e3;
+                border-color: #faebcc;
+                color: #8a6d3b;
+            }
+            
+                .c-alert.c--shown {
+                    display: inline-block;
+                }
+                
+            .c-menu {
+                display: none;
+            }
+            
+                .c-menu.c--shown {
+                    display: block;
+                }
         </style>
     </head>
     <body class="">
+        <div class="c-intro c--shown">
+            <h1>Welcome to Pokelingo</h1>
+            <p>Your grand adventure in language translation is about to begin...</p>
+            <div class="c-menu c--shown">
+                <h2>Choose your destination:</h2>
+                <a class="js-load-game" data-id="platinum" href="#">Pokemon Platinum</a>
+            </div>
+            <div class="c-alert"><strong>Loading...</strong> Please wait, this may take a while (10MB).</div>
+        </div>
         
-        <table class="sectionTemplate">
-            <thead>
-                <tr>
-                    <th>English</th>
-                    <th>Japanese</th>
-                    <th class="it">Italian</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="c-message en" data-lang="en"></td>
-                    <td class="c-message jp" data-lang="jp"></td>
-                    <td class="c-message it" data-lang="it"></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div id="wrapper">
+        <div class="c-game-panel c--pokemon-platinum">
             <div class="c-primary-sidebar">
                 <form id="filters" class="c-filters">
                     <div class="c-filters__search">
@@ -276,6 +312,24 @@
         </div>
 
         <div id="tts"></div>
+
+        <table class="sectionTemplate">
+            <thead>
+                <tr>
+                    <th>English</th>
+                    <th>Japanese</th>
+                    <th class="it">Italian</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="c-message en" data-lang="en"></td>
+                    <td class="c-message jp" data-lang="jp"></td>
+                    <td class="c-message it" data-lang="it"></td>
+                </tr>
+            </tbody>
+        </table>
+
 
         
         <script src="http://code.jquery.com/jquery-2.1.1.js"></script>
@@ -418,6 +472,8 @@
                         
                         // Clear the active text groups (if any)
                         $('.c-message__group').removeClass('c--active');
+                        
+                        $('.c-filters__navigation-control.c--next').trigger('click');
 
                         return false;
                     });
@@ -584,7 +640,7 @@
                             }
                         });
                         
-                        $(document).scrollTop($('.c-message__group.c--active').eq(0).offset().top);
+                        $(window).scrollTop($('.c-message__group.c--active').eq(0).offset().top);
                     }
                 }
                 
@@ -599,7 +655,7 @@
                         if(resultIndex === 0) {
                             // If we're on the first result of this listing, 
                             // let's go to the prev listing (or to the last listing)
-                            if(listingIndex === 0) {
+                            if(listingIndex <= 0) {
                                 // We're on the first listing item
                                 // So let's go to the end
                                 listingIndex = $('.c-filters__listing .c-filters__listing-item.c--shown').length - 1;
@@ -631,7 +687,7 @@
                     });
                 
                     $('.c-filters__navigation-control.c--next').on('click', function() {
-                        if(resultIndex === $('.c-message__group.c--active').length - 1) {
+                        if(resultIndex >= $('.c-message__group.c--active').length - 1) {
                             // If we're on the last result of this listing, 
                             // let's go to the next listing (or back to the first listing)
                             if(listingIndex === $('.c-filters__listing .c-filters__listing-item.c--shown').length - 1) {
@@ -657,10 +713,7 @@
                             $('.c-filters__listing .c-filters__listing-item.c--shown').eq(listingIndex).addClass('c--active').trigger('click');
                         }
                         
-                        // We need a delay here to wait for rendering of the newly active listing
-                        setTimeout(function() {
-                            $(window).scrollTop($('.c-message__group.c--active').eq(resultIndex).offset().top);
-                        });
+                        $(window).scrollTop($('.c-message__group.c--active').eq(resultIndex).offset().top);
                         
                         return false;
                     });
@@ -748,7 +801,7 @@
                     });
                 }
                 
-                function initExternalMessages() {
+                function initExternalMessages(callback) {
                     $.ajax({
                         url: 'lang/en/messages.json',
                         success: function(messages) {
@@ -772,6 +825,8 @@
                                     lang.jp.messages = messages;
                                     
                                     updateListing();
+                                    
+                                    callback ? callback() : null;
                                 }
                             });
                         }
@@ -813,13 +868,26 @@
                     }
                 }
                 
-                //initInlineMessages();
-                bindFilters();
-                bindFilterResultNavigation();
-                bindTextTranslation();
-                bindVoiceTranslation();
-                initExternalMessages();
+                function bindIntro() {
+                    $('.js-load-game').on('click', function() {
+                        $('.c-intro .c-menu').removeClass('c--shown');
+                        $('.c-intro .c-alert').addClass('c--shown');
+                        
+                        bindFilters();
+                        bindFilterResultNavigation();
+                        bindTextTranslation();
+                        bindVoiceTranslation();
+                        
+                        initExternalMessages(function() {
+                            //
+                            $('.c-intro').removeClass('c--shown');
+                            $('.c-game-panel').addClass('c--shown');
+                        });
+                    });
+                }
                 
+                //initInlineMessages();
+                bindIntro();
             });
         </script>
     </body>
