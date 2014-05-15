@@ -745,9 +745,11 @@
                         if(!$('.c-filters__listing .c-filters__listing-item.c--active').length) {
                             // Activate the newly active listing
                             $('.c-filters__listing .c-filters__listing-item.c--shown').eq(listingIndex).addClass('c--active').trigger('click');
+                            
+                            if($('.c-message__group.c--active').length) {
+                                $(window).scrollTop($('.c-message__group.c--active').eq(resultIndex).offset().top);
+                            }
                         }
-                        
-                        $(window).scrollTop($('.c-message__group.c--active').eq(resultIndex).offset().top);
                         
                         return false;
                     });
