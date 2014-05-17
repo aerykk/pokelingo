@@ -437,9 +437,9 @@
                 var resultIndex = 0;
                 
                 function convertMessageText(text) {
-                    text = text.replace(/\\n/gi, '<br> 　');
-                    text = text.replace(/\\r/gi, '<br><br> 　');
-                    text = text.replace(/\\f/gi, '<br> 　');
+                    text = text.replace(/\\n/gi, ' 　<br>');
+                    text = text.replace(/\\r/gi, ' 　<br><br>');
+                    text = text.replace(/\\f/gi, ' 　<br>');
                     
                     text = text.replace(/VAR\(259, 1, 0\)/gi, 'PLAYER');
                     text = text.replace(/VAR\(259, 1\)/gi, 'PLAYER');
@@ -616,7 +616,7 @@
                             $message.append($group);
                         });
 
-                        $row.find('.en').html('<div class="c-message__key">#' + sectionId + '_' + enMessage.key + '</div> <div class="c-message__value">' + $message.html() + '</div>');
+                        $row.find('.en').html('<div class="c-message__key">#' + sectionId + '_' + enMessage.key + ' <a href="#" class="js-speak-message">Speak</a> | <a href="#" class="js-copy-text" data-clipboard-text="' + messageText.replace(/<br>/gi, "\n") + '">Copy</a></div> <div class="c-message__value">' + $message.html() + '</div>');
                         
                         if(jpMessages) {
                             var jpMessage = jpMessages.filter(function(item) {
@@ -648,7 +648,7 @@
                                     $message.append($group);
                                 });
 
-                                $row.find('.jp').html('<div class="c-message__key">#' + sectionId + '_' + jpMessage.key + '</div> <div class="c-message__value">' + $message.html() + '</div>');
+                                $row.find('.jp').html('<div class="c-message__key">#' + sectionId + '_' + jpMessage.key + ' <a href="#" class="js-speak-message">Speak</a> | <a href="#" class="js-copy-text" data-clipboard-text="' + messageText.replace(/<br>/gi, "\n") + '">Copy</a></div> <div class="c-message__value">' + $message.html() + '</div>');
                             }
                         }
                         
@@ -657,6 +657,15 @@
                     
                     $sections.empty();
                     $sections.append($table);
+                    
+                    function bindCopyText() {
+                        
+                        $sections.find('.js-copy-text').each(function() {
+                            var clip = new ZeroClipboard(this);
+                        });
+                    }
+                    
+                    bindCopyText();
                     
                     // Now let's see if we can find some items that use the search term
                     
@@ -770,8 +779,8 @@
                         $('<script>').attr('src', '/api/1/tts/?lang=' + lang + '&callback=injectTTS&text=' + $item.text()).appendTo('head');
                     });
 
-                    $(document).on('click', '.c-message__key', function() {
-                        var $item = $(this).next();
+                    $(document).on('click', '.js-speak-message', function() {
+                        var $item = $(this).parent().next();
 
                         $item.addClass('c--active');
 
@@ -797,6 +806,8 @@
                         var lang = $item.parents('.c-message').data('lang');
 
                         $('<script>').attr('src', '/api/1/tts/?lang=' + lang + '&callback=injectTTS&text=' + $item.text()).appendTo('head');
+                        
+                        return false;
                     });
                     
                 }
@@ -1068,6 +1079,8 @@
             background-color: #333;
         }
         </style>
+        
+        <script src="assets/js/ZeroClipboard.min.js" type="text/javascript"></script>
         
         <div class="github-fork-ribbon-wrapper left-bottom">
             <div class="github-fork-ribbon">
